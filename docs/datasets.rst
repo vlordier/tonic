@@ -43,6 +43,7 @@ Pose estimation, visual odometry, SLAM
     DAVISDATA
     DSEC
     MVSEC
+    SEVAR
     TUMVIE
     VPR
 

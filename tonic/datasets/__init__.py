@@ -13,6 +13,7 @@ from .nmnist import NMNIST
 from .ntidigits18 import NTIDIGITS18
 from .pokerdvs import POKERDVS
 from .s_mnist import SMNIST
+from .sevar import SEVAR
 from .threeET_eyetracking import ThreeET_Eyetracking
 from .tum_vie import TUMVIE
 from .visual_place_recognition import VPR
@@ -31,6 +32,7 @@ __all__ = [
     "NMNIST",
     "NTIDIGITS18",
     "POKERDVS",
+    "SEVAR",
     "SHD",
     "SMNIST",
     "SSC",
