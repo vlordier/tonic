@@ -173,9 +173,9 @@ class DSEC(Dataset):
                         f"Recording {recording} is neither in train nor in test set."
                     )
             self.recording_selection = split
-            if all([recording in self.recordings["train"] for recording in split]):
+            if all(recording in self.recordings["train"] for recording in split):
                 self.train_or_test = "train"
-            elif all([recording in self.recordings["test"] for recording in split]):
+            elif all(recording in self.recordings["test"] for recording in split):
                 self.train_or_test = "test"
             else:
                 raise RuntimeError("Cannot mix across train/test split.")
@@ -211,7 +211,7 @@ class DSEC(Dataset):
                 )
 
         # only take those recordings that have optical flow ground truth
-        if any(["optical_flow" in selection for selection in target_selection]):
+        if any("optical_flow" in selection for selection in target_selection):
             deselect = [
                 name
                 for name in self.recording_selection
@@ -219,7 +219,8 @@ class DSEC(Dataset):
             ]
             if len(deselect) > 0:
                 warnings.warn(
-                    f"Since you asked for optical flow targets, the following recordings without optical flow ground truth are dropped: {deselect}."
+                    f"Since you asked for optical flow targets, the following recordings without optical flow ground truth are dropped: {deselect}.",
+                    stacklevel=2,
                 )
                 self.recording_selection = [
                     name

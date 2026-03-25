@@ -70,7 +70,7 @@ class SMNIST(Dataset):
         transform=None,
         target_transform=None,
     ):
-        super(SMNIST, self).__init__(
+        super().__init__(
             save_to, transform=transform, target_transform=target_transform
         )
         self.location_on_system = os.path.join(save_to, "smnist")

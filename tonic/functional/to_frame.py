@@ -36,7 +36,9 @@ def to_frame_numpy(
     Returns:
         numpy array with dimensions (TxPxHxW)
     """
-    assert "x" and "t" and "p" in events.dtype.names
+    assert "x" in events.dtype.names
+    assert "t" in events.dtype.names
+    assert "p" in events.dtype.names
 
     if (
         not sum(

@@ -38,11 +38,11 @@ def to_timesurface_numpy(
     p_index = event_slices[0].dtype.names.index("p")
     t_index = event_slices[0].dtype.names.index("t")
     start_t = event_slices[0][0][t_index]
-    for i, slice in enumerate(event_slices):
+    for i, event_slice in enumerate(event_slices):
         # structured to unstructured in order to access the indices
-        slice = rfn.structured_to_unstructured(slice, dtype=int)
-        indices = slice[:, [p_index, y_index, x_index]].T
-        timestamps = slice[:, t_index]
+        event_slice = rfn.structured_to_unstructured(event_slice, dtype=int)
+        indices = event_slice[:, [p_index, y_index, x_index]].T
+        timestamps = event_slice[:, t_index]
         memory[tuple(indices)] = timestamps
         diff = -((i + 1) * dt + start_t - memory)
         surf = np.exp(diff / tau)

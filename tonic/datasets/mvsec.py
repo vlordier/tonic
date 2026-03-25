@@ -174,12 +174,10 @@ class MVSEC(Dataset):
             )
 
     def _check_exists(self):
-        files_present = list(
-            [
-                check_integrity(
-                    os.path.join(self.location_on_system, self.scene, filename)
-                )
-                for (filename, md5_hash) in self.resources[self.scene]
-            ]
-        )
+        files_present = [
+            check_integrity(
+                os.path.join(self.location_on_system, self.scene, filename)
+            )
+            for (filename, md5_hash) in self.resources[self.scene]
+        ]
         return all(files_present)

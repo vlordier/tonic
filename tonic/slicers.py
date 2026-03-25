@@ -85,8 +85,8 @@ class SliceByTime:
         metadata = self.get_slice_metadata(data, targets)
         slices, targets = self.slice_with_metadata(data, targets, metadata)
         if self.reset_time:
-            for i, slice in enumerate(slices):
-                slice["t"] = slice["t"] - i * self.time_window
+            for i, event_slice in enumerate(slices):
+                event_slice["t"] = event_slice["t"] - i * self.time_window
         return slices, targets
 
     def get_slice_metadata(

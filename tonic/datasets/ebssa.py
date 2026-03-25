@@ -147,6 +147,6 @@ class EBSSA(Dataset):
         import gdown
 
         Path(self.location_on_system).mkdir(exist_ok=True)
-        id = self.file_id
-        if not Path(self.location_on_system, id).exists():
-            gdown.download(id=id, quiet=False)
+        gdown_id = self.file_id
+        if not Path(self.location_on_system, gdown_id).exists():
+            gdown.download(id=gdown_id, quiet=False)

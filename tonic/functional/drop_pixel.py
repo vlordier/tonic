@@ -15,7 +15,9 @@ def identify_hot_pixel(events: np.ndarray, hot_pixel_frequency: float):
         list of (x/y) coordinates for excessively firing pixels.
     """
 
-    assert "x" and "y" and "t" in events.dtype.names
+    assert "x" in events.dtype.names
+    assert "y" in events.dtype.names
+    assert "t" in events.dtype.names
 
     total_time = events["t"][-1] - events["t"][0]
 
@@ -63,7 +65,8 @@ def drop_pixel_numpy(events: np.ndarray, coordinates):
         subset of original events.
     """
 
-    assert "x" and "y" in events.dtype.names
+    assert "x" in events.dtype.names
+    assert "y" in events.dtype.names
 
     dropped_pixel_mask = np.full((events.shape[0]), False, dtype=bool)
     for x, y in coordinates:

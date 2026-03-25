@@ -19,7 +19,9 @@ def refractory_period_numpy(
         filtered set of events.
     """
 
-    assert "t" and "x" and "y" in events.dtype.names
+    assert "t" in events.dtype.names
+    assert "x" in events.dtype.names
+    assert "y" in events.dtype.names
 
     events_copy = np.zeros_like(events)
     copy_index = 0

@@ -74,7 +74,7 @@ class POKERDVS(Dataset):
             self._copy_and_extract_local_data()
 
         file_path = os.path.join(self.location_on_system, self.folder_name)
-        for path, dirs, files in os.walk(file_path):
+        for path, _dirs, files in os.walk(file_path):
             files.sort()
             for file in files:
                 if file.endswith("npy"):

@@ -35,7 +35,9 @@ def drop_by_time_numpy(
     Returns:
         np.ndarray: augmented events that were not dropped (i.e., the events that are not in the time interval).
     """
-    assert "x" and "t" and "p" in events.dtype.names
+    assert "x" in events.dtype.names
+    assert "t" in events.dtype.names
+    assert "p" in events.dtype.names
     assert (
         isinstance(duration_ratio, float)
         and duration_ratio >= 0.0
@@ -80,7 +82,10 @@ def drop_by_area_numpy(
     Returns:
         np.ndarray: augmented events that were not dropped (i.e., the events that are not located in the box area).
     """
-    assert "x" and "t" and "y" and "p" in events.dtype.names
+    assert "x" in events.dtype.names
+    assert "t" in events.dtype.names
+    assert "y" in events.dtype.names
+    assert "p" in events.dtype.names
     assert (
         isinstance(area_ratio, float) and area_ratio >= 0.0 and area_ratio < 1.0
     ) or (

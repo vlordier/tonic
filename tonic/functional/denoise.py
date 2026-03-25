@@ -16,7 +16,9 @@ def denoise_numpy(events, filter_time=10000):
         filtered set of events.
     """
 
-    assert "x" and "y" and "t" in events.dtype.names
+    assert "x" in events.dtype.names
+    assert "y" in events.dtype.names
+    assert "t" in events.dtype.names
 
     events_copy = np.zeros_like(events)
     copy_index = 0

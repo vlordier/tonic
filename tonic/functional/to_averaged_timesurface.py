@@ -34,7 +34,10 @@ def _map_to_locmems(events, sensor_size, cell_size):
     w, h, npols = sensor_size
     wgrid, hgrid = ceil(w / cell_size), ceil(h / cell_size)
     ncells = int(wgrid * hgrid)
-    px_to_cell = lambda y, x: int((y // cell_size) * wgrid + x // cell_size)
+
+    def px_to_cell(y, x):
+        return int((y // cell_size) * wgrid + x // cell_size)
+
     # Mapping events to local memories.
     locmems = [[[] for p in range(npols)] for c in range(ncells)]
     for event in events:
@@ -78,7 +81,10 @@ def to_averaged_timesurface_numpy(
 
     assert surface_size <= cell_size
     assert surface_size % 2 != 0
-    assert "x" and "y" and "t" and "p" in events.dtype.names
+    assert "x" in events.dtype.names
+    assert "y" in events.dtype.names
+    assert "t" in events.dtype.names
+    assert "p" in events.dtype.names
     assert decay == "lin" or decay == "exp"
 
     # Organizing the events in cells which are, then, saved as NumPy arrays.

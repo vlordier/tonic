@@ -58,7 +58,7 @@ class ASLDVS(Dataset):
         if not self._check_exists():
             self.download()
             # extract zips within zip
-            for path, dirs, files in os.walk(self.location_on_system):
+            for _path, dirs, files in os.walk(self.location_on_system):
                 dirs.sort()
                 for file in files:
                     if file.startswith("Yin") and file.endswith("zip"):

@@ -15,7 +15,10 @@ def to_voxel_grid_numpy(events, sensor_size, n_time_bins=10):
     Returns:
         numpy array of n event volumes (n,w,h,t)
     """
-    assert "x" and "y" and "t" and "p" in events.dtype.names
+    assert "x" in events.dtype.names
+    assert "y" in events.dtype.names
+    assert "t" in events.dtype.names
+    assert "p" in events.dtype.names
     assert sensor_size[2] == 2
 
     voxel_grid = np.zeros((n_time_bins, sensor_size[1], sensor_size[0]), float).ravel()

@@ -17,8 +17,10 @@ def crop_numpy(events, sensor_size, target_size):
         sensor_size - cropped to target_size
     """
 
-    assert target_size[0] <= sensor_size[0] and target_size[1] <= sensor_size[1]
-    assert "x" and "y" in events.dtype.names
+    assert target_size[0] <= sensor_size[0]
+    assert target_size[1] <= sensor_size[1]
+    assert "x" in events.dtype.names
+    assert "y" in events.dtype.names
 
     x_start_ind = int(np.random.rand() * (sensor_size[0] - target_size[0]))
     y_start_ind = int(np.random.rand() * (sensor_size[1] - target_size[1]))

@@ -109,6 +109,10 @@ target-version = "py310"
 select = ["E", "F", "I", "N", "W", "UP", "B", "A", "C4", "PT"]
 ignore = ["E501", "N806"]  # Line too long, non-lowercase variable names (scientific computing)
 
+[tool.ruff.lint.per-file-ignores]
+# threeET_eyetracking uses non-standard naming for historical/API-compatibility reasons
+"tonic/datasets/threeET_eyetracking.py" = ["N999"]
+
 [tool.pytest.ini_options]
 testpaths = ["test"]
 python_files = ["test_*.py"]

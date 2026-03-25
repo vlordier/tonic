@@ -54,7 +54,7 @@ class NERDD:
         if not os.path.isdir(data_path):
             return False
         npz_files = []
-        for root, _, files in os.walk(data_path):
+        for _root, _, files in os.walk(data_path):
             npz_files.extend([f for f in files if f.endswith(".npz")])
         return len(npz_files) == 115
 

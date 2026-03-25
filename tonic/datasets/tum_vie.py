@@ -151,14 +151,14 @@ class TUMVIE(Dataset):
 
         imu_data = []
         with open(os.path.join(base_folder, "imu_data.txt")) as f:
-            header = f.readline()
+            f.readline()  # skip header line
             for line in f.readlines():
                 imu_data.append([float(num) for num in line.split()])
         imu_data = np.array(imu_data)
 
         mocap_data = []
         with open(os.path.join(base_folder, "mocap_data.txt")) as f:
-            header = f.readline()
+            f.readline()  # skip header line
             for line in f.readlines():
                 mocap_data.append([float(num) for num in line.split()])
         mocap_data = np.array(mocap_data)

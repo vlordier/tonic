@@ -1,15 +1,8 @@
 import logging
 import os
-import sys
-
-if sys.version_info >= (3, 8):
-    from collections.abc import Callable, Iterable
-else:
-    from collections.abc import Callable, Iterable
-
-
 import random
 import shutil
+from collections.abc import Callable, Iterable
 from dataclasses import dataclass, field
 from pathlib import Path
 from warnings import warn
@@ -238,7 +231,7 @@ def load_from_disk_cache(file_path: str | Path) -> tuple:
 
 
 @dataclass
-class Aug_DiskCachedDataset(DiskCachedDataset):
+class Aug_DiskCachedDataset(DiskCachedDataset):  # noqa: N801
     """Aug_DiskCachedDataset is a child class from DiskCachedDataset with further customizations to
     handle augmented copies of a sample. The goal of this customization is to map the indices of
     cached files (copy) to augmentation parameters. This is useful in a category of augmentations

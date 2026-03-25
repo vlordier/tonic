@@ -330,8 +330,6 @@ class MelButterFilterBank(LinearButterFilterBank):
         high_freq = self.sampling_freq / 2 / (1 + filter_bandwidth) - 1
         freqs = np.linspace(self.low_freq, high_freq, self.num_filters)
 
-        freq_bands = np.array([freqs, freqs * (1 + filter_bandwidth)]) / nyquist
-
         low_freq = self.hz2mel(self.low_freq)
         high_freq = self.hz2mel(self.sampling_freq / 2 / (1 + filter_bandwidth) - 1)
         freqs = self.mel2hz(np.linspace(low_freq, high_freq, self.num_filters))

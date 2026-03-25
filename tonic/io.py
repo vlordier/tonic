@@ -242,22 +242,21 @@ def read_aedat_header_from_file(filename):
     """
     filename = os.path.expanduser(filename)
     assert os.path.isfile(filename), f"The .aedat file '{filename}' does not exist."
-    f = open(filename, "rb")
-    count = 1
-    is_comment = "#" in str(f.read(count))
+    with open(filename, "rb") as f:
+        count = 1
+        is_comment = "#" in str(f.read(count))
 
-    start_timestamp = None
-    while is_comment:
-        # Read the rest of the line
-        head = str(f.readline())
-        if "!AER-DAT" in head:
-            data_version = float(head[head.find("!AER-DAT") + 8 : -5])
-        elif "Creation time:" in head:
-            start_timestamp = int(head.split()[4].split("\\")[0])
-        is_comment = "#" in str(f.read(1))
-        count += 1
-    data_start = f.seek(-1, 1)
-    f.close()
+        start_timestamp = None
+        while is_comment:
+            # Read the rest of the line
+            head = str(f.readline())
+            if "!AER-DAT" in head:
+                data_version = float(head[head.find("!AER-DAT") + 8 : -5])
+            elif "Creation time:" in head:
+                start_timestamp = int(head.split()[4].split("\\")[0])
+            is_comment = "#" in str(f.read(1))
+            count += 1
+        data_start = f.seek(-1, 1)
     return data_version, data_start, start_timestamp
 
 
@@ -276,25 +275,24 @@ def get_aer_events_from_file(filename, data_version, data_start):
     """
     filename = os.path.expanduser(filename)
     assert os.path.isfile(filename), "The .aedat file does not exist."
-    f = open(filename, "rb")
-    f.seek(data_start)
+    with open(filename, "rb") as f:
+        f.seek(data_start)
 
-    if 2 <= data_version < 3:
-        event_dtype = np.dtype([("address", ">u4"), ("timeStamp", ">u4")])
-        all_events = np.fromfile(f, event_dtype)
-    elif data_version > 3:
-        event_dtype = np.dtype([("address", "<u4"), ("timeStamp", "<u4")])
-        event_list = []
-        while True:
-            header = f.read(28)
-            if not header or len(header) == 0:
-                break
+        if 2 <= data_version < 3:
+            event_dtype = np.dtype([("address", ">u4"), ("timeStamp", ">u4")])
+            all_events = np.fromfile(f, event_dtype)
+        elif data_version > 3:
+            event_dtype = np.dtype([("address", "<u4"), ("timeStamp", "<u4")])
+            event_list = []
+            while True:
+                header = f.read(28)
+                if not header or len(header) == 0:
+                    break
 
-            # read header
-            capacity = struct.unpack("I", header[16:20])[0]
-            event_list.append(np.fromfile(f, event_dtype, capacity))
-        all_events = np.concatenate(event_list)
-    else:
-        raise NotImplementedError()
-    f.close()
+                # read header
+                capacity = struct.unpack("I", header[16:20])[0]
+                event_list.append(np.fromfile(f, event_dtype, capacity))
+            all_events = np.concatenate(event_list)
+        else:
+            raise NotImplementedError()
     return all_events

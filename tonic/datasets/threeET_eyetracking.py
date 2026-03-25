@@ -9,7 +9,7 @@ from tonic.dataset import Dataset
 from tonic.io import make_structured_array
 
 
-class ThreeET_Eyetracking(Dataset):
+class ThreeET_Eyetracking(Dataset):  # noqa: N801
     """3ET DVS eye tracking `3ET <https://github.com/qinche106/cb-convlstm-eyetracking>`_
     ::
 

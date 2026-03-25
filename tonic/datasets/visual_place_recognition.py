@@ -148,13 +148,11 @@ class VPR(Dataset):
 
     def _check_exists(self):
         # check if all filenames are correct
-        files_present = list(
-            [
-                check_integrity(os.path.join(self.location_on_system, filename))
-                for recording in self.recordings
-                for filename, md5 in recording
-            ]
-        )
+        files_present = [
+            check_integrity(os.path.join(self.location_on_system, filename))
+            for recording in self.recordings
+            for filename, md5 in recording
+        ]
         return all(files_present)
 
     # code taken from https://github.com/Tobias-Fischer/ensemble-event-vpr/blob/master/read_gps.py

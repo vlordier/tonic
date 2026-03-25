@@ -32,7 +32,9 @@ def differentiator_downsample(
         the spatio-temporally downsampled input events using the differentiator method.
     """
 
-    assert "x" and "y" and "t" in events.dtype.names
+    assert "x" in events.dtype.names
+    assert "y" in events.dtype.names
+    assert "t" in events.dtype.names
     assert np.logical_and(
         np.remainder(differentiator_time_bins, 1) == 0, differentiator_time_bins >= 1
     )
@@ -114,8 +116,9 @@ def integrator_downsample(
         the spatio-temporally downsampled input events using the integrator method.
     """
 
-    assert "x" and "y" and "t" in events.dtype.names
-    assert isinstance(noise_threshold, int)
+    assert "x" in events.dtype.names
+    assert "y" in events.dtype.names
+    assert "t" in events.dtype.names
     assert dt is not None
 
     events = events.copy()

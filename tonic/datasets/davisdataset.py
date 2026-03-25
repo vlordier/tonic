@@ -150,12 +150,10 @@ class DAVISDATA(Dataset):
 
     def _check_exists(self):
         # check if all filenames are correct
-        files_present = list(
-            [
-                check_integrity(
-                    os.path.join(self.location_on_system, recording + ".bag")
-                )
-                for recording in self.selection
-            ]
-        )
+        files_present = [
+            check_integrity(
+                os.path.join(self.location_on_system, recording + ".bag")
+            )
+            for recording in self.selection
+        ]
         return all(files_present)

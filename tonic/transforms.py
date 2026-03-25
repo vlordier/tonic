@@ -584,7 +584,8 @@ class RandomTimeReversal:
                 # array with negative strides are not supported to be converted to tensor by torch, so return a copy
                 return events[::-1, ::-1, ...].copy()
 
-            assert "t" and "p" in events.dtype.names
+            assert "t" in events.dtype.names
+            assert "p" in events.dtype.names
             events["t"] = np.max(events["t"]) - events["t"]
             if self.flip_polarities:
                 events["p"] = np.invert(events["p"].astype(bool)).astype(

@@ -30,7 +30,8 @@ def spatial_jitter_numpy(
         array of spatially jittered events.
     """
 
-    assert "x" and "y" in events.dtype.names
+    assert "x" in events.dtype.names
+    assert "y" in events.dtype.names
 
     shifts = np.random.multivariate_normal(
         [0, 0], [[var_x, sigma_xy], [sigma_xy, var_y]], len(events)
