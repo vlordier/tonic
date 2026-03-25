@@ -158,7 +158,7 @@ class SEVAR(Dataset):
         images_right = np.stack(images_right["frames"])
 
         # IMU (ICM42688P, 1000 Hz)
-        imu = topics["/imu/data"]
+        imu = dict(topics["/imu/data"])
         imu["ts"] = ((imu["ts"] - imu["ts"][0]) * 1e6).astype(int)
 
         data = {
