@@ -1,3 +1,4 @@
+import logging
 import os
 from collections.abc import Callable
 
@@ -5,6 +6,8 @@ import numpy as np
 
 from tonic.dataset import Dataset
 from tonic.download_utils import extract_archive
+
+logger = logging.getLogger(__name__)
 
 
 class DVSLip(Dataset):
@@ -218,18 +221,17 @@ class DVSLip(Dataset):
         if not self._check_exists():
             if self._is_file_present():  # check if zip file is manually downloaded
                 archive = os.path.join(self.location_on_system, self.filename)
-                print(f"Extracting {archive} to {self.location_on_system}...")
+                logger.info("Extracting %s to %s...", archive, self.location_on_system)
                 extract_archive(
                     archive,
                     remove_finished=True,
                 )
             else:
-                print(
-                    f"""
-                    WARNING: this dataset is available from Google Drive and must be downloaded manually.
-                    Please download the zip file ( {self.url} ) and place it in {self.location_on_system}."""
+                raise RuntimeError(
+                    f"This dataset is available from Google Drive and must be downloaded"
+                    f" manually. Please download the zip file ( {self.url} ) and place it"
+                    f" in {self.location_on_system}."
                 )
-                exit()
 
         file_path = os.path.join(self.location_on_system, self.folder_name)
 

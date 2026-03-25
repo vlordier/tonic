@@ -1,3 +1,4 @@
+import logging
 import os
 from collections.abc import Callable, Iterable
 from dataclasses import dataclass
@@ -7,6 +8,8 @@ import h5py
 
 from .slicers import Slicer
 
+logger = logging.getLogger(__name__)
+
 
 def save_metadata(path, metadata):
     os.makedirs(path, exist_ok=True)
@@ -14,14 +17,14 @@ def save_metadata(path, metadata):
     with h5py.File(file_path, "w") as f:
         for i, data in enumerate(metadata):
             f.create_dataset(f"metadata_{i}", data=data)
-    print(f"Metadata written to {file_path}.")
+    logger.info("Metadata written to %s.", file_path)
 
 
 def load_metadata(path):
     file_path = os.path.join(path, "slice_metadata.h5")
     with h5py.File(file_path, "r") as f:
         metadata = [f[f"metadata_{i}"][()] for i in range(len(f.keys()))]
-    print(f"Metadata read from {file_path}.")
+    logger.info("Metadata read from %s.", file_path)
     return metadata
 
 
@@ -60,7 +63,7 @@ class SlicedDataset:
         if self.metadata_path:
             try:
                 self.metadata = load_metadata(self.metadata_path)
-            except (FileNotFoundError, OSError) as _:
+            except (FileNotFoundError, OSError):
                 self.metadata = self.generate_metadata()
                 save_metadata(self.metadata_path, self.metadata)
         else:

@@ -26,7 +26,8 @@ def to_timesurface_numpy(
         array of timesurfaces with dimensions (n_events//dt, p, h , w)
     """
 
-    assert dt >= 0, print("Parameter delta_t cannot be negative.")
+    if dt < 0:
+        raise ValueError("Parameter delta_t cannot be negative.")
 
     event_slices = slice_events_by_time(
         events, time_window=dt, overlap=overlap, include_incomplete=include_incomplete

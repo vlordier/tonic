@@ -1,12 +1,14 @@
 import bz2
 import gzip
 import hashlib
+import logging
 import lzma
 import os
 import os.path
 import pathlib
 import re
 import tarfile
+import time
 import urllib
 import urllib.error
 import urllib.request
@@ -19,19 +21,25 @@ from tqdm.auto import tqdm
 
 # this file is shamelessly copied from https://github.com/pytorch/vision/blob/master/torchvision/datasets/utils.py
 
+logger = logging.getLogger(__name__)
+
 USER_AGENT = "tonic"
 
+_DOWNLOAD_RETRIES = 3
+_DOWNLOAD_RETRY_DELAY = 1.0  # seconds, doubled on each retry
 
-def _urlretrieve(url: str, filename: str, chunk_size: int = 1024) -> None:
+
+def _urlretrieve(url: str, filename: str, chunk_size: int = 1024 * 8) -> None:
     with open(filename, "wb") as fh:
         with urllib.request.urlopen(
             urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
         ) as response:
             with tqdm(total=response.length) as pbar:
-                for chunk in iter(lambda: response.read(chunk_size), ""):
+                while True:
+                    chunk = response.read(chunk_size)
                     if not chunk:
                         break
-                    pbar.update(chunk_size)
+                    pbar.update(len(chunk))
                     fh.write(chunk)
 
 
@@ -114,7 +122,7 @@ def download_file_from_google_drive(
     os.makedirs(root, exist_ok=True)
 
     if check_integrity(fpath, md5):
-        print("Using downloaded and verified file: " + fpath)
+        logger.info("Using downloaded and verified file: %s", fpath)
         return
 
     gdown.download(id=file_id, output=fpath, quiet=False)
@@ -132,6 +140,9 @@ def download_url(
 ) -> None:
     """Download a file from a url and place it in root.
 
+    Automatically retries up to ``_DOWNLOAD_RETRIES`` times on transient
+    network errors with exponential backoff.
+
     Args:
         url (str): URL to download file from
         root (str): Directory to place downloaded file in
@@ -148,7 +159,7 @@ def download_url(
 
     # check if file is already present locally
     if check_integrity(fpath, md5):
-        print("Using downloaded and verified file: " + fpath)
+        logger.info("Using downloaded and verified file: %s", fpath)
         return
 
     # expand redirect chain if needed
@@ -159,22 +170,37 @@ def download_url(
     if file_id is not None:
         return download_file_from_google_drive(file_id, root, filename, md5)
 
-    # download the file
-    try:
-        print("Downloading " + url + " to " + fpath)
-        _urlretrieve(url, fpath)
-    except (OSError, urllib.error.URLError) as e:  # type: ignore[attr-defined]
-        if url[:5] == "https":
-            url = url.replace("https:", "http:")
-            print(
-                "Failed download. Trying https -> http instead. Downloading "
-                + url
-                + " to "
-                + fpath
-            )
-            _urlretrieve(url, fpath)
-        else:
-            raise e
+    # download the file with retries
+    urls_to_try = [url]
+    if url.startswith("https:"):
+        urls_to_try.append(url.replace("https:", "http:", 1))
+
+    last_error: Exception | None = None
+    for attempt_url in urls_to_try:
+        delay = _DOWNLOAD_RETRY_DELAY
+        for attempt in range(1, _DOWNLOAD_RETRIES + 1):
+            try:
+                logger.info("Downloading %s to %s", attempt_url, fpath)
+                _urlretrieve(attempt_url, fpath)
+                last_error = None
+                break  # success
+            except (OSError, urllib.error.URLError) as exc:  # type: ignore[attr-defined]
+                last_error = exc
+                if attempt < _DOWNLOAD_RETRIES:
+                    logger.warning(
+                        "Download attempt %d/%d failed (%s). Retrying in %.1fs…",
+                        attempt,
+                        _DOWNLOAD_RETRIES,
+                        exc,
+                        delay,
+                    )
+                    time.sleep(delay)
+                    delay *= 2
+        if last_error is None:
+            break  # this URL worked
+
+    if last_error is not None:
+        raise last_error
 
     # check integrity of downloaded file
     if not check_integrity(fpath, md5):
@@ -183,7 +209,7 @@ def download_url(
 
 def _extract_tar(from_path: str, to_path: str, compression: str | None) -> None:
     with tarfile.open(from_path, f"r:{compression[1:]}" if compression else "r") as tar:
-        tar.extractall(to_path)
+        tar.extractall(to_path, filter="data")
 
 
 _ZIP_COMPRESSION_MAP: dict[str, int] = {
@@ -357,7 +383,7 @@ def download_and_extract_archive(
     download_url(url, download_root, filename, md5)
 
     archive = os.path.join(download_root, filename)
-    print(f"Extracting {archive} to {extract_root}")
+    logger.info("Extracting %s to %s", archive, extract_root)
     extract_archive(archive, extract_root, remove_finished)
 
 

@@ -1,3 +1,4 @@
+import logging
 import os
 from collections.abc import Callable
 from typing import Any
@@ -6,6 +7,8 @@ import numpy as np
 
 from tonic.download_utils import extract_archive
 from tonic.io import make_structured_array
+
+logger = logging.getLogger(__name__)
 
 
 class NERDD:
@@ -60,10 +63,10 @@ class NERDD:
 
     def _extract_archive(self):
         """Extract the dataset archive."""
-        print(f"Extracting {self.filename}...")
+        logger.info("Extracting %s...", self.filename)
         archive_path = os.path.join(self.location_on_system, self.filename)
         extract_archive(archive_path)
-        print(f"Extraction complete. Files are now in {self.location_on_system}.")
+        logger.info("Extraction complete. Files are now in %s.", self.location_on_system)
 
     def _load_dataset_structure(self):
         """Load the dataset files and their corresponding labels."""
@@ -93,8 +96,10 @@ class NERDD:
                         (event_file, label_file, int(archive[8:]), int(scene))
                     )
                 else:
-                    print(
-                        f"Skipping scene {scene} in archive {archive}: missing files."
+                    logger.warning(
+                        "Skipping scene %s in archive %s: missing files.",
+                        scene,
+                        archive,
                     )
 
     def __getitem__(self, index: int) -> tuple[Any, Any]:

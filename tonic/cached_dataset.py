@@ -10,6 +10,8 @@ from warnings import warn
 import h5py
 import numpy as np
 
+logger = logging.getLogger(__name__)
+
 
 @dataclass
 class MemoryCachedDataset:
@@ -42,7 +44,7 @@ class MemoryCachedDataset:
     def __getitem__(self, index):
         try:
             data, targets = self.samples_dict[index]
-        except KeyError as _:
+        except KeyError:
             data, targets = self.dataset[index]
             if self.device is not None:
                 data = data.to(self.device)
@@ -136,10 +138,9 @@ class DiskCachedDataset:
         file_path = os.path.join(self.cache_path, f"{item}_{copy}.hdf5")
         try:
             data, targets = load_from_disk_cache(file_path)
-        except (FileNotFoundError, OSError) as _:
-            logging.info(
-                f"Data {item}: {file_path} not in cache, generating it now",
-                stacklevel=2,
+        except (FileNotFoundError, OSError):
+            logger.info(
+                "Data %s: %s not in cache, generating it now", item, file_path
             )
 
             data, targets = self.dataset[item]
@@ -264,7 +265,7 @@ class Aug_DiskCachedDataset(DiskCachedDataset):  # noqa: N801
             file_path = os.path.join(self.cache_path, f"{item}_{copy}.hdf5")
             try:
                 data, targets = load_from_disk_cache(file_path)
-            except (FileNotFoundError, OSError) as _:
+            except (FileNotFoundError, OSError):
                 self.generate_copy(item, copy)
 
     def generate_copy(self, item, copy):
@@ -287,10 +288,9 @@ class Aug_DiskCachedDataset(DiskCachedDataset):  # noqa: N801
         try:
             data, targets = load_from_disk_cache(file_path)
 
-        except (FileNotFoundError, OSError) as _:
-            logging.info(
-                f"Data {item}: {file_path} not in cache, generating it now",
-                stacklevel=2,
+        except (FileNotFoundError, OSError):
+            logger.info(
+                "Data %s: %s not in cache, generating it now", item, file_path
             )
             self.generate_copy(item, copy)
 

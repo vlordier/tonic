@@ -1,3 +1,4 @@
+import logging
 import os
 import urllib.request
 from collections.abc import Callable
@@ -10,6 +11,8 @@ try:
     from dv import LegacyAedatFile
 except ImportError:
     LegacyAedatFile = None  # type: ignore[assignment,misc]
+
+logger = logging.getLogger(__name__)
 
 
 class POKERDVS131(Dataset):
@@ -109,7 +112,7 @@ class POKERDVS131(Dataset):
         for f in self.files:
             dest = os.path.join(self.location, f)
             if not os.path.isfile(dest):
-                print(f"Downloading {f} ...")
+                logger.info("Downloading %s ...", f)
                 urllib.request.urlretrieve(self.base_url + f, dest)
 
     def __getitem__(self, index):

@@ -1,5 +1,6 @@
 #!/user/bin/env python
 
+import logging
 import os
 from collections.abc import Callable
 
@@ -10,6 +11,8 @@ from tqdm import tqdm
 
 from tonic.dataset import Dataset
 from tonic.io import make_structured_array
+
+logger = logging.getLogger(__name__)
 
 
 class NTIDIGITS18(Dataset):
@@ -103,7 +106,7 @@ class NTIDIGITS18(Dataset):
     def download(self) -> None:
         response = requests.get(self.base_url, stream=True)
         if response.status_code == 200:
-            print(f"Downloading N-TIDIGITS from Dropbox at {self.base_url}...")
+            logger.info("Downloading N-TIDIGITS from Dropbox at %s...", self.base_url)
             file_size = int(
                 response.headers.get("Content-Length", 0)
             )  # get total file size in bytes
@@ -126,7 +129,7 @@ class NTIDIGITS18(Dataset):
                         f.write(chunk)
                         pbar.update(len(chunk))
         else:
-            print("Failed to download N-TIDIGITS from Dropbox. Please try again later.")
+            logger.error("Failed to download N-TIDIGITS from Dropbox. Please try again later.")
             response.raise_for_status()
 
     def __getitem__(self, index):
